@@ -9,3 +9,4 @@ cargo clippy --workspace --all-targets --all-features --  -D warnings -W clippy:
 cargo test --workspace --all-targets --all-features
 cargo test --workspace --doc
 trunk build
+#lol
