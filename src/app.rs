@@ -1,3 +1,11 @@
+use std::ops::DerefMut;
+use std::sync::{Arc, Mutex};
+
+use eframe::App;
+use tokio::spawn;
+
+use crate::tradingview::client::lolreq;
+
 /// We derive Deserialize/Serialize so we can persist app state on shutdown.
 #[derive(serde::Deserialize, serde::Serialize)]
 #[serde(default)] // if we add new fields, give them default values when deserializing old state
@@ -8,6 +16,19 @@ pub struct AppState {
     // this how you opt-out of serialization of a member
     #[serde(skip)]
     value: f32,
+
+    #[serde(skip)]
+    data: Arc<Mutex<Box<Data>>>,
+}
+
+struct Data {
+    body: Option<String>,
+}
+
+impl Default for Data {
+    fn default() -> Self {
+        Data { body: None }
+    }
 }
 
 impl Default for AppState {
@@ -16,8 +37,14 @@ impl Default for AppState {
             // Example stuff:
             label: "Hello World!".to_owned(),
             value: 2.7,
+            data: wrap(Data::default()),
         }
     }
+}
+
+type Meow<T> = Arc<Mutex<Box<T>>>;
+fn wrap<T>(obj: T) -> Meow<T> {
+    Arc::new(Mutex::new(Box::new(obj)))
 }
 
 impl AppState {
@@ -45,8 +72,6 @@ impl eframe::App for AppState {
     /// Called each time the UI needs repainting, which may be many times per second.
     /// Put your widgets into a `SidePanel`, `TopPanel`, `CentralPanel`, `Window` or `Area`.
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
-        let Self { label, value } = self;
-
         #[cfg(not(target_arch = "wasm32"))] // no File->Quit on web pages!
         egui::TopBottomPanel::top("top_panel").show(ctx, |ui| {
             // The top panel is often a good place for a menu bar:
@@ -64,12 +89,23 @@ impl eframe::App for AppState {
 
             ui.horizontal(|ui| {
                 ui.label("Write something: ");
-                ui.text_edit_singleline(label);
+                ui.text_edit_singleline(&mut self.label);
             });
 
-            ui.add(egui::Slider::new(value, 0.0..=10.0).text("value"));
+            ui.add(egui::Slider::new(&mut self.value, 0.0..=10.0).text("value"));
             if ui.button("Increment").clicked() {
-                *value += 1.0;
+                self.value += 1.0;
+            }
+
+            if ui.button("meow").clicked() {
+                self.do_stuff()
+            };
+
+            if let Some(body) = &self.data.lock().unwrap().body {
+                let scroll = egui::scroll_area::ScrollArea::new([true, true]);
+                scroll.show(ui, |ui| {
+                    ui.label(body);
+                });
             }
 
             ui.with_layout(egui::Layout::bottom_up(egui::Align::LEFT), |ui| {
@@ -107,5 +143,25 @@ impl eframe::App for AppState {
                 ui.label("You would normally choose either panels OR windows.");
             });
         }
+    }
+}
+
+impl AppState {
+    fn do_stuff(&self) {
+        let m = self.data.to_owned();
+        let job = async move {
+            let res = lolreq().await;
+            match res {
+                Ok(body) => {
+                    println!("{:?}", &body);
+                    m.lock().unwrap().body = Some(body);
+                }
+                Err(e) => {
+                    println!("{:?}", e)
+                }
+            }
+        };
+
+        spawn(job);
     }
 }

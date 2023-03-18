@@ -9,5 +9,5 @@ fn it_works() {
 #[tokio::test]
 async fn it_works2() {
     let result = lolreq();
-    assert_eq!(result.await.unwrap(), 10);
+    assert_eq!(result.await.unwrap(), "".to_string());
 }

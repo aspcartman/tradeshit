@@ -2,14 +2,14 @@ use anyhow::Result;
 use tungstenite::{connect, Message};
 use url::Url;
 
-pub async fn lolreq() -> Result<i32> {
+pub async fn lolreq() -> Result<String> {
     let body = reqwest::get("https://www.rust-lang.org")
         .await?
         .text()
         .await?;
 
     println!("body = {:?}", body);
-    return Ok(10);
+    return Ok(body);
 }
 
 pub fn lol() -> Result<i32> {
