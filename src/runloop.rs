@@ -1,9 +1,8 @@
 use std::future::Future;
 
-fn spawn<C>(fun: C)
+pub fn spawn<C>(fun: C)
 where
-    C: Future + Send + 'static,
-    C::Output: Future + Send + 'static,
+    C: Future<Output = ()> + Send + 'static,
 {
     #[cfg(not(target_arch = "wasm32"))]
     tokio::spawn(fun);

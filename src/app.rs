@@ -1,10 +1,6 @@
-use std::ops::DerefMut;
+use super::runloop::spawn;
+use anyhow::Result;
 use std::sync::{Arc, Mutex};
-
-use eframe::App;
-use tokio::spawn;
-
-use crate::tradingview::client::lolreq;
 
 /// We derive Deserialize/Serialize so we can persist app state on shutdown.
 #[derive(serde::Deserialize, serde::Serialize)]
@@ -21,14 +17,9 @@ pub struct AppState {
     data: Arc<Mutex<Box<Data>>>,
 }
 
+#[derive(Default)]
 struct Data {
     body: Option<String>,
-}
-
-impl Default for Data {
-    fn default() -> Self {
-        Data { body: None }
-    }
 }
 
 impl Default for AppState {
@@ -164,4 +155,8 @@ impl AppState {
 
         spawn(job);
     }
+}
+
+async fn lolreq() -> Result<String> {
+    return Ok("meow".to_string());
 }

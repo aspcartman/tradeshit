@@ -1,4 +1,4 @@
-use crate::tradingview::client::{lol, lolreq};
+use super::client::{lol, lolreq};
 
 #[test]
 fn it_works() {

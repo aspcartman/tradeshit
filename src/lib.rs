@@ -1,7 +1,5 @@
 #![warn(clippy::all, rust_2018_idioms)]
 
-pub use app::AppState;
-
 mod app;
-mod tradingview;
 mod runloop;
+mod tradingview;

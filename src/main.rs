@@ -1,7 +1,9 @@
-#![warn(clippy::all, rust_2018_idioms)]
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")] // hide console window on Windows in release
 
-use tradeshit::AppState;
+mod app;
+mod runloop;
+
+use app::AppState;
 
 // When compiling natively:
 #[cfg(not(target_arch = "wasm32"))]
@@ -10,7 +12,7 @@ pub async fn main() -> eframe::Result<()> {
     // Log to stdout (if you run with `RUST_LOG=debug`).
     tracing_subscriber::fmt::init();
 
-    let mut opts = eframe::NativeOptions::default();
+    let opts = eframe::NativeOptions::default();
     eframe::run_native(
         "TradeShit",
         opts,

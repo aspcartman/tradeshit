@@ -1,6 +1,5 @@
 use anyhow::Result;
 use tungstenite::{connect, Message};
-use url::Url;
 
 pub async fn lolreq() -> Result<String> {
     let body = reqwest::get("https://www.rust-lang.org")
