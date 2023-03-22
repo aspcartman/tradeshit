@@ -1,13 +1,14 @@
-use super::client::{lol, lolreq};
+use anyhow::Result;
 
-#[test]
-fn it_works() {
-    let result = lol();
-    assert_eq!(result.unwrap(), 10);
-}
+use super::client::Client;
 
 #[tokio::test]
-async fn it_works2() {
-    let result = lolreq();
-    assert_eq!(result.await.unwrap(), "".to_string());
+async fn it_works() -> Result<()> {
+    let (mut client, mut qrx) = Client::new().await?;
+    client.subscribe("MOEX:NGH2023").await?;
+    while let Some(q) = qrx.recv().await {
+        println!("YAY! {:?}", q)
+    }
+    println!("oh");
+    Ok(())
 }

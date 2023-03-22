@@ -18,8 +18,11 @@ serde = { version = "1", features = ["derive"] }
 anyhow = "1.0.69"
 url = "2.3.1"
 reqwest = { version = "0.11.14", features = ["cookies", "gzip", "deflate", "json", "multipart", "stream"] }
-tungstenite = { version = "*", features = [] }
-#tokio-tungstenite = { version = "*", features = ["native-tls"] }
+#tungstenite = { version = "*", features = [] }
+tokio-tungstenite = { version = "*", features = ["native-tls"] }
+serde_json = "1.0.94"
+rand = "0.8.5"
+chrono = "0.4.24"
 
 # native:
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
