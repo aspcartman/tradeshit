@@ -8,6 +8,7 @@ use serde::Deserialize;
 use serde_json::{Map, Value};
 
 use crate::tradingview::messages::Command;
+use crate::tradingview::quote_data::QuoteData;
 
 pub struct QuoteSession {
     pub id: String,
@@ -114,14 +115,6 @@ impl QuoteDataDiff {
             last_update: Utc::now(), // todo fix
         })
     }
-}
-
-#[derive(Debug, Clone)]
-pub struct QuoteData {
-    pub symbol: String,
-    pub last_price: f64,
-    pub last_price_time: DateTime<Utc>,
-    pub last_update: DateTime<Utc>,
 }
 
 const FIELDS: [&'static str; 48] = [

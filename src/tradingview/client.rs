@@ -12,9 +12,9 @@ use tokio_tungstenite::tungstenite::Message;
 use tokio_tungstenite::{connect_async, MaybeTlsStream, WebSocketStream};
 
 use crate::tradingview::messages::{Command, ToWSMessage};
+use crate::tradingview::quote_data::QuoteData;
 use crate::tradingview::quote_processor::QPInput::{Subscribe, Update};
 use crate::tradingview::quote_processor::{QPInput, QuoteProcessor};
-use crate::tradingview::quotes::QuoteData;
 
 type Stream = WebSocketStream<MaybeTlsStream<TcpStream>>;
 
@@ -131,7 +131,7 @@ impl Client {
         Ok(())
     }
 
-    pub async fn subscribe(&mut self, quote: &str) -> Result<()> {
+    pub async fn subscribe(&self, quote: &str) -> Result<()> {
         self.qtx.send(Subscribe(quote.to_string())).await?;
         Ok(())
     }

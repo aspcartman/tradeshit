@@ -8,7 +8,8 @@ use tokio::sync::mpsc::{channel, Receiver, Sender};
 use tokio_tungstenite::tungstenite::Message;
 
 use crate::tradingview::messages::ToWSMessage;
-use crate::tradingview::quotes::{QuoteData, QuoteSession};
+use crate::tradingview::quote_data::QuoteData;
+use crate::tradingview::quotes::QuoteSession;
 
 #[derive(Debug)]
 pub enum QPInput {
